@@ -39,6 +39,8 @@ class Configuration {
     Configuration(const std::filesystem::path &config_path,
                   const SectionKeyPairToConfigLogic &section_key_to_config_logic);
 
+    void reload_config();
+
   private:
     std::filesystem::path config_path;
     SectionKeyPairToConfigLogic section_key_to_config_logic;

@@ -9,7 +9,12 @@ Configuration::Configuration(const std::filesystem::path &config_path,
     apply_config_logic();
 }
 
-// Parses the configuration file
+void Configuration::reload_config() {
+    config_data.clear();
+    parse_config_file();
+    apply_config_logic();
+}
+
 void Configuration::parse_config_file() {
     std::ifstream file(config_path);
     if (!file.is_open()) {
@@ -44,7 +49,7 @@ void Configuration::parse_config_file() {
     }
 }
 
-// Applies configuration logic for each section-key-value pair
+// applies configuration logic for each section-key-value pair
 void Configuration::apply_config_logic() {
     for (const auto &[section, key_values] : config_data) {
         for (const auto &[key, value] : key_values) {
@@ -56,6 +61,7 @@ void Configuration::apply_config_logic() {
     }
 }
 
+// TODO: move to text utils
 // Trims leading and trailing whitespace from a string
 std::string Configuration::trim(const std::string &str) {
     size_t start = str.find_first_not_of(" \t");
