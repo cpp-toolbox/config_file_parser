@@ -65,6 +65,8 @@ bool Configuration::set_value(const std::string &section, const std::string &key
     // Update the internal state
     section_to_key_to_value[section][key] = value;
 
+    console_logger.debug("got here");
+
     // Apply the config logic for this specific key if it exists
     auto logic_it = section_key_to_config_logic.find({section, key});
     if (logic_it != section_key_to_config_logic.end()) {
@@ -161,11 +163,15 @@ bool Configuration::save_to_file(const std::filesystem::path &path) {
     }
 
     for (const auto &[section, key_values] : section_to_key_to_value) {
+        console_logger.debug("Writing section: [{}]", section);
+
         // Write section header
         file << "[" << section << "]\n";
 
-        // Write key-value pairs for this section
         for (const auto &[key, value] : key_values) {
+            console_logger.debug("  {} = {}", key, value);
+
+            // Write key-value pair
             file << key << " = " << value << "\n";
         }
 

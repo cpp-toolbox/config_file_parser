@@ -38,7 +38,7 @@ class Configuration {
      * @param config_logic Map of section-key pairs to their corresponding logic
      * functions.
      */
-    Configuration(const std::filesystem::path &config_path, const SectionKeyPairToConfigLogic &config_logic);
+    Configuration(const std::filesystem::path &config_path, const SectionKeyPairToConfigLogic &config_logic = {});
 
     /**
      * @brief Reloads the configuration from file, discarding any in-memory
