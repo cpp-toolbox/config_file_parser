@@ -9,10 +9,15 @@ Configuration::Configuration(const std::filesystem::path &config_path,
     apply_config_logic();
 }
 
-void Configuration::reload_config() {
+void Configuration::reload_config_from_file() {
     section_to_key_to_value.clear();
     parse_config_file();
     apply_config_logic();
+}
+
+void Configuration::register_config_handler(const std::string &section, const std::string &key, ConfigLogic logic) {
+    SectionKeyPair pair{section, key};
+    section_key_to_config_logic[pair] = std::move(logic);
 }
 
 void Configuration::parse_config_file() {
@@ -61,26 +66,16 @@ void Configuration::apply_config_logic() {
 
 // New methods for live configuration modification
 
-bool Configuration::set_value(const std::string &section, const std::string &key, const std::string &value) {
+bool Configuration::set_value(const std::string &section, const std::string &key, const std::string &value,
+                              const bool apply) {
     // Update the internal state
     section_to_key_to_value[section][key] = value;
 
-    console_logger.debug("got here");
-
-    // Apply the config logic for this specific key if it exists
-    auto logic_it = section_key_to_config_logic.find({section, key});
-    if (logic_it != section_key_to_config_logic.end()) {
-        try {
-            logic_it->second(value);
-            console_logger.debug("Applied config logic for [{}].{} = {}", section, key, value);
-            return true;
-        } catch (const std::exception &e) {
-            console_logger.error("Failed to apply config logic for [{}].{} = {}: {}", section, key, value, e.what());
-            return false;
-        }
+    if (apply) {
+        apply_config_logic_for_key(section, key);
     }
 
-    console_logger.debug("Set config value [{}].{} = {} (no logic applied)", section, key, value);
+    console_logger.debug("Set config value [{}].{} = {}", section, key, value);
     return true;
 }
 
