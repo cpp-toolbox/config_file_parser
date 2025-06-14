@@ -30,7 +30,8 @@ class Configuration {
     using SectionKeyPairToConfigLogic = std::unordered_map<SectionKeyPair, ConfigLogic, PairHash>;
     using ConfigData = std::unordered_map<std::string, std::unordered_map<std::string, std::string>>;
 
-    Configuration(const std::filesystem::path &config_path, const SectionKeyPairToConfigLogic &config_logic = {});
+    Configuration(const std::filesystem::path &config_path, const SectionKeyPairToConfigLogic &config_logic = {},
+                  bool apply = true);
 
     // discards any in-memory changes
     void reload_config_from_file();
