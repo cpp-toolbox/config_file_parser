@@ -58,6 +58,7 @@ void Configuration::apply_config_logic() {
         for (const auto &[key, value] : key_values) {
             auto logic_it = section_key_to_config_logic.find({section, key});
             if (logic_it != section_key_to_config_logic.end()) {
+                console_logger.debug("running config logic on {}, {} with value {}", section, key, value);
                 logic_it->second(value);
             } else {
                 console_logger.warn("there was no function associated with the section, key pair: {}, {}", section,
