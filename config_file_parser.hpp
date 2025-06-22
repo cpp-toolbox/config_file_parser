@@ -36,7 +36,8 @@ class Configuration {
     // discards any in-memory changes
     void reload_config_from_file();
 
-    void register_config_handler(const std::string &section, const std::string &key, ConfigLogic logic);
+    void register_config_handler(const std::string &section, const std::string &key,
+                                 std::function<void(const std::string)> logic);
 
     // Live configuration modification methods
 
@@ -64,7 +65,7 @@ class Configuration {
   private:
     std::filesystem::path config_path;
     SectionKeyPairToConfigLogic section_key_to_config_logic;
-    ConfigData section_to_key_to_value;
+    std::unordered_map<std::string, std::unordered_map<std::string, std::string>> section_to_key_to_value;
     ConsoleLogger console_logger;
 
     void parse_config_file();

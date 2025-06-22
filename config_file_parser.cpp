@@ -18,7 +18,8 @@ void Configuration::reload_config_from_file() {
     apply_config_logic();
 }
 
-void Configuration::register_config_handler(const std::string &section, const std::string &key, ConfigLogic logic) {
+void Configuration::register_config_handler(const std::string &section, const std::string &key,
+                                            std::function<void(const std::string)> logic) {
     SectionKeyPair pair{section, key};
     section_key_to_config_logic[pair] = std::move(logic);
 }
@@ -29,15 +30,18 @@ void Configuration::parse_config_file() {
         console_logger.error("Unable to open config file: {}", config_path.string());
         return;
     }
+
     std::string line, current_section;
     while (std::getline(file, line)) {
         size_t comment_pos = line.find('#');
         if (comment_pos != std::string::npos) {
             line = line.substr(0, comment_pos);
         }
+
         line = trim(line);
         if (line.empty())
             continue;
+
         if (line.front() == '[' && line.back() == ']') {
             current_section = trim(line.substr(1, line.length() - 2));
         } else {
@@ -46,8 +50,21 @@ void Configuration::parse_config_file() {
                 console_logger.warn("Invalid line in config file: {}", line);
                 continue;
             }
+
             std::string key = trim(line.substr(0, delimiter_pos));
-            std::string value = trim(line.substr(delimiter_pos + 1));
+            std::string raw_value = line.substr(delimiter_pos + 1);
+
+            std::string value;
+            bool string_is_all_spaces =
+                std::all_of(raw_value.begin(), raw_value.end(), [](char c) { return c == ' '; });
+            if (string_is_all_spaces) {
+                // then simplify to a single space
+                value = " ";
+            } else {
+                // otherwise trim off excess.
+                value = trim(raw_value);
+            }
+
             section_to_key_to_value[current_section][key] = value;
         }
     }
