@@ -3,7 +3,7 @@
 
 Configuration::Configuration(const std::filesystem::path &config_path,
                              const SectionKeyPairToConfigLogic &section_key_to_config_logic, bool apply)
-    : config_path(expand_tilde(config_path)), section_key_to_config_logic(section_key_to_config_logic) {
+    : config_path(fs_utils::expand_tilde(config_path)), section_key_to_config_logic(section_key_to_config_logic) {
     console_logger.set_name("configuration");
     parse_config_file();
 
