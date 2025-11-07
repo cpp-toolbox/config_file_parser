@@ -171,6 +171,9 @@ std::vector<std::string> Configuration::get_keys(const std::string &section) {
 bool Configuration::save_to_file() { return save_to_file(config_path); }
 
 bool Configuration::save_to_file(const std::filesystem::path &path) {
+
+    fs_utils::create_file(path);
+
     std::ofstream file(path);
     if (!file.is_open()) {
         console_logger.error("Unable to open config file for writing: {}", path.string());
