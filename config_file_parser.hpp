@@ -13,6 +13,10 @@
 /**
  * @brief Class to parse a configuration file and apply logic based on
  * section-key pairs.
+ *
+ * the configuration is stored live in this class/object, and provides methods for loading and saving configuration from
+ * or to file
+ *
  */
 class Configuration {
   public:

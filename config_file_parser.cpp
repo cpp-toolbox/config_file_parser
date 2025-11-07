@@ -32,8 +32,18 @@ void Configuration::parse_config_file() {
 
     std::string line, current_section;
     while (std::getline(file, line)) {
-        size_t comment_pos = line.find('#');
+
+        // Find the first comment character: either '#' or ';'
+        size_t hash_pos = line.find('#');
+        size_t semicolon_pos = line.find(';');
+
+        // Determine which appears first (if any)
+        size_t comment_pos = std::min(hash_pos, semicolon_pos);
+
+        // std::string::npos is a very large number, so this works safely
         if (comment_pos != std::string::npos) {
+            // NOTE:  Grabs everything up until the comment position, when the comment is at the start of the line this
+            // returns the empty string which is what we want
             line = line.substr(0, comment_pos);
         }
 
